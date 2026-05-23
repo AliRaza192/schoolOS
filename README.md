@@ -130,6 +130,8 @@ npm run db:studio    # Open Drizzle Studio (visual DB browser)
 ---
 
 ## 📁 Project Structure
+
+```
 schoolos/
 ├── app/
 │   ├── (auth)/                 # Clerk sign-in / sign-up pages
@@ -156,9 +158,8 @@ schoolos/
 │   ├── utils.ts                # Utility functions
 │   └── validations/            # Zod validation schemas
 └── types/
-└── index.ts                # Global TypeScript types
-
----
+    └── index.ts                # Global TypeScript types
+```
 
 ## 🔐 Environment Variables
 

@@ -184,3 +184,82 @@ export type Fee = typeof fees.$inferSelect;
 export type NewFee = typeof fees.$inferInsert;
 export type Subscription = typeof subscriptions.$inferSelect;
 export type NewSubscription = typeof subscriptions.$inferInsert;
+
+
+// ─── Relations ───────────────────────────────────────────
+import { relations } from "drizzle-orm";
+
+export const schoolsRelations = relations(schools, ({ many }) => ({
+  users: many(users),
+  classes: many(classes),
+  students: many(students),
+  attendance: many(attendance),
+  fees: many(fees),
+  subscriptions: many(subscriptions),
+}));
+
+export const usersRelations = relations(users, ({ one }) => ({
+  school: one(schools, {
+    fields: [users.schoolId],
+    references: [schools.id],
+  }),
+}));
+
+export const classesRelations = relations(classes, ({ one, many }) => ({
+  school: one(schools, {
+    fields: [classes.schoolId],
+    references: [schools.id],
+  }),
+  teacher: one(users, {
+    fields: [classes.teacherId],
+    references: [users.id],
+  }),
+  students: many(students),
+  attendance: many(attendance),
+}));
+
+export const studentsRelations = relations(students, ({ one, many }) => ({
+  school: one(schools, {
+    fields: [students.schoolId],
+    references: [schools.id],
+  }),
+  class: one(classes, {
+    fields: [students.classId],
+    references: [classes.id],
+  }),
+  attendance: many(attendance),
+  fees: many(fees),
+}));
+
+export const attendanceRelations = relations(attendance, ({ one }) => ({
+  student: one(students, {
+    fields: [attendance.studentId],
+    references: [students.id],
+  }),
+  class: one(classes, {
+    fields: [attendance.classId],
+    references: [classes.id],
+  }),
+  school: one(schools, {
+    fields: [attendance.schoolId],
+    references: [schools.id],
+  }),
+}));
+
+export const feesRelations = relations(fees, ({ one }) => ({
+  student: one(students, {
+    fields: [fees.studentId],
+    references: [students.id],
+  }),
+  school: one(schools, {
+    fields: [fees.schoolId],
+    references: [schools.id],
+  }),
+}));
+
+export const subscriptionsRelations = relations(subscriptions, ({ one }) => ({
+  school: one(schools, {
+    fields: [subscriptions.schoolId],
+    references: [schools.id],
+  }),
+}));
