@@ -6,18 +6,20 @@ import { eq } from "drizzle-orm";
 import Sidebar from "@/components/dashboard/sidebar";
 import Header from "@/components/dashboard/header";
 
+interface DashboardLayoutProps {
+  children: React.ReactNode;
+  title?: string;
+}
+
 export default async function DashboardLayout({
   children,
-}: {
-  children: React.ReactNode;
-}) {
+}: DashboardLayoutProps) {
   const { userId } = await auth();
 
   if (!userId) {
     redirect("/sign-in");
   }
 
-  // Check if user has completed onboarding
   const user = await db.query.users.findFirst({
     where: eq(users.clerkId, userId),
     with: {
@@ -25,18 +27,33 @@ export default async function DashboardLayout({
     },
   });
 
-  if (!user || !user.schoolId) {
+  if (!user) {
+    redirect("/onboarding");
+  }
+
+  if (!user.schoolId || !user.school) {
     redirect("/onboarding");
   }
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
-      {/* Sidebar */}
-      <Sidebar school={user.school} />
+      {/* Sidebar — Desktop only */}
+      <div className="hidden md:flex">
+        <Sidebar
+          schoolName={user.school.name}
+          schoolPlan={user.school.plan}
+          userName={user.name}
+        />
+      </div>
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        <Header user={user} />
+        <Header
+          title="Dashboard"
+          schoolName={user.school.name}
+          schoolPlan={user.school.plan}
+          userName={user.name}
+        />
         <main className="flex-1 overflow-y-auto p-6">
           {children}
         </main>

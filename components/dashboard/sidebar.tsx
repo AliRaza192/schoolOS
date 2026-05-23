@@ -5,101 +5,59 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   Users,
-  ClipboardList,
-  DollarSign,
+  CalendarCheck,
+  CreditCard,
   FileText,
   Settings,
-  GraduationCap,
-  ChevronLeft,
-  ChevronRight,
+  BookOpen,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
-import { useState } from "react";
-import type { School } from "@/db/schema";
+import { UserButton } from "@clerk/nextjs";
 
 const navItems = [
-  {
-    label: "Dashboard",
-    href: "/dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    label: "Students",
-    href: "/dashboard/students",
-    icon: Users,
-  },
-  {
-    label: "Attendance",
-    href: "/dashboard/attendance",
-    icon: ClipboardList,
-  },
-  {
-    label: "Fees",
-    href: "/dashboard/fees",
-    icon: DollarSign,
-  },
-  {
-    label: "Reports",
-    href: "/dashboard/reports",
-    icon: FileText,
-    badge: "AI",
-  },
-  {
-    label: "Settings",
-    href: "/dashboard/settings",
-    icon: Settings,
-  },
+  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { label: "Students", href: "/dashboard/students", icon: Users },
+  { label: "Attendance", href: "/dashboard/attendance", icon: CalendarCheck },
+  { label: "Fees", href: "/dashboard/fees", icon: CreditCard },
+  { label: "Reports", href: "/dashboard/reports", icon: FileText },
+  { label: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
 
 interface SidebarProps {
-  school: School | null;
+  schoolName: string;
+  schoolPlan: string;
+  userName: string;
 }
 
-export default function Sidebar({ school }: SidebarProps) {
+export default function Sidebar({ schoolName, schoolPlan, userName }: SidebarProps) {
   const pathname = usePathname();
-  const [collapsed, setCollapsed] = useState(false);
+
+  const planBadgeClass =
+    schoolPlan === "pro"
+      ? "bg-blue-100 text-blue-700"
+      : schoolPlan === "academy"
+      ? "bg-amber-100 text-amber-700"
+      : "bg-gray-100 text-gray-600";
 
   return (
-    <aside
-      className={cn(
-        "relative flex flex-col bg-white border-r border-gray-200 transition-all duration-300",
-        collapsed ? "w-16" : "w-64"
-      )}
-    >
-      {/* Logo */}
+    <aside className="flex flex-col w-64 h-full bg-white border-r border-gray-200">
+      {/* Top — School Info */}
       <div className="flex items-center gap-3 px-4 py-5 border-b border-gray-200">
-        <div className="flex-shrink-0 w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-          <GraduationCap className="w-5 h-5 text-white" />
+        <div className="flex-shrink-0 w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
+          <span className="text-white font-bold text-lg">
+            {schoolName?.charAt(0)?.toUpperCase() ?? "S"}
+          </span>
         </div>
-        {!collapsed && (
-          <div className="overflow-hidden">
-            <p className="font-bold text-gray-900 text-sm truncate">
-              {school?.name ?? "SchoolOS"}
-            </p>
-            <p className="text-xs text-gray-400 truncate">{school?.city}</p>
-          </div>
-        )}
-      </div>
-
-      {/* Plan Badge */}
-      {!collapsed && (
-        <div className="px-4 py-2 border-b border-gray-100">
-          <Badge
-            variant="secondary"
-            className={cn(
-              "text-xs font-medium capitalize",
-              school?.plan === "pro" && "bg-blue-100 text-blue-700",
-              school?.plan === "academy" && "bg-purple-100 text-purple-700",
-              school?.plan === "basic" && "bg-gray-100 text-gray-600"
-            )}
-          >
-            {school?.plan ?? "basic"} plan
+        <div className="overflow-hidden">
+          <p className="font-bold text-gray-900 text-sm truncate">{schoolName}</p>
+          <Badge className={cn("text-xs font-medium capitalize mt-0.5", planBadgeClass)}>
+            {schoolPlan} plan
           </Badge>
         </div>
-      )}
+      </div>
 
-      {/* Nav Items */}
+      {/* Nav Links */}
       <nav className="flex-1 px-2 py-4 space-y-1">
         {navItems.map((item) => {
           const isActive =
@@ -114,49 +72,22 @@ export default function Sidebar({ school }: SidebarProps) {
               className={cn(
                 "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
                 isActive
-                  ? "bg-blue-50 text-blue-700"
+                  ? "bg-blue-600 text-white"
                   : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
               )}
             >
-              <item.icon
-                className={cn(
-                  "flex-shrink-0 w-5 h-5",
-                  isActive ? "text-blue-700" : "text-gray-400"
-                )}
-              />
-              {!collapsed && (
-                <span className="flex-1 truncate">{item.label}</span>
-              )}
-              {!collapsed && item.badge && (
-                <Badge className="bg-blue-600 text-white text-xs px-1.5 py-0">
-                  {item.badge}
-                </Badge>
-              )}
+              <item.icon className="flex-shrink-0 w-5 h-5" />
+              <span className="truncate">{item.label}</span>
             </Link>
           );
         })}
       </nav>
 
-      {/* Collapse Button */}
-      <button
-        onClick={() => setCollapsed(!collapsed)}
-        className="absolute -right-3 top-20 w-6 h-6 bg-white border border-gray-200 rounded-full flex items-center justify-center shadow-sm hover:bg-gray-50 transition-colors z-10"
-      >
-        {collapsed ? (
-          <ChevronRight className="w-3 h-3 text-gray-500" />
-        ) : (
-          <ChevronLeft className="w-3 h-3 text-gray-500" />
-        )}
-      </button>
-
-      {/* Footer */}
-      {!collapsed && (
-        <div className="px-4 py-3 border-t border-gray-200">
-          <p className="text-xs text-gray-400 text-center">
-            SchoolOS Pakistan v1.0
-          </p>
-        </div>
-      )}
+      {/* Bottom — User */}
+      <div className="flex items-center gap-3 px-4 py-4 border-t border-gray-200">
+        <UserButton appearance={{ elements: { avatarBox: "w-8 h-8" } }} />
+        <p className="text-sm text-gray-600 truncate">{userName}</p>
+      </div>
     </aside>
   );
 }
