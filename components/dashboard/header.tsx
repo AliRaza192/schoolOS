@@ -1,7 +1,6 @@
 "use client";
 
 import { Menu } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,
@@ -26,10 +25,8 @@ export default function Header({
     <header className="flex items-center gap-4 px-6 py-4 bg-white border-b border-gray-200">
       {/* Mobile Hamburger */}
       <Sheet>
-        <SheetTrigger asChild>
-          <Button variant="ghost" size="icon" className="md:hidden">
-            <Menu className="w-5 h-5" />
-          </Button>
+        <SheetTrigger className="md:hidden inline-flex items-center justify-center w-9 h-9 rounded-lg hover:bg-gray-100">
+          <Menu className="w-5 h-5 text-gray-600" />
         </SheetTrigger>
         <SheetContent side="left" className="p-0 w-64">
           <Sidebar

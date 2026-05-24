@@ -1,20 +1,9 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-import { z } from "zod";
 import { db } from "@/db";
-import { students, users, classes } from "@/db/schema";
-import { eq, and, ilike, desc } from "drizzle-orm";
-
-const studentSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  fatherName: z.string().min(2, "Father name must be at least 2 characters"),
-  phone: z.string().regex(/^03[0-9]{9}$/, "Invalid Pakistani phone number").optional().or(z.literal("")),
-  address: z.string().optional(),
-  classId: z.string().uuid("Invalid class").optional().or(z.literal("")),
-  rollNo: z.string().optional(),
-  dob: z.string().optional(),
-  admissionDate: z.string(),
-});
+import { students, users } from "@/db/schema";
+import { eq, and, ilike, or, count } from "drizzle-orm";
+import { studentSchema } from "@/lib/validations/student";
 
 async function getSchoolId(userId: string) {
   const user = await db.query.users.findFirst({
@@ -23,7 +12,6 @@ async function getSchoolId(userId: string) {
   return user?.schoolId;
 }
 
-// GET — List all students
 export async function GET(req: Request) {
   try {
     const { userId } = await auth();
@@ -33,36 +21,48 @@ export async function GET(req: Request) {
     if (!schoolId) return NextResponse.json({ error: "School not found" }, { status: 404 });
 
     const { searchParams } = new URL(req.url);
-    const search = searchParams.get("search") || "";
-    const classId = searchParams.get("classId") || "";
+    const search = searchParams.get("search") ?? "";
+    const classId = searchParams.get("classId") ?? "";
+    const page = parseInt(searchParams.get("page") ?? "1");
+    const limit = 25;
+    const offset = (page - 1) * limit;
 
     const conditions = [
       eq(students.schoolId, schoolId),
       eq(students.isActive, true),
     ];
 
+    if (classId) conditions.push(eq(students.classId, classId));
     if (search) {
-      conditions.push(ilike(students.name, `%${search}%`));
+      conditions.push(
+        or(
+          ilike(students.name, `%${search}%`),
+          ilike(students.fatherName, `%${search}%`)
+        )!
+      );
     }
 
-    if (classId) {
-      conditions.push(eq(students.classId, classId));
-    }
+    const [result, totalResult] = await Promise.all([
+      db.query.students.findMany({
+        where: and(...conditions),
+        with: { class: true },
+        orderBy: students.name,
+        limit,
+        offset,
+      }),
+      db.select({ count: count() }).from(students).where(and(...conditions)),
+    ]);
 
-    const result = await db.query.students.findMany({
-      where: and(...conditions),
-      with: { class: true },
-      orderBy: desc(students.createdAt),
+    return NextResponse.json({
+      students: result,
+      total: totalResult[0]?.count ?? 0,
     });
-
-    return NextResponse.json({ students: result });
   } catch (error) {
     console.error("[STUDENTS_GET]", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
-// POST — Create student
 export async function POST(req: Request) {
   try {
     const { userId } = await auth();
@@ -81,18 +81,36 @@ export async function POST(req: Request) {
       );
     }
 
-    const { name, fatherName, phone, address, classId, rollNo, dob, admissionDate } = validated.data;
+    const { name, fatherName, classId, rollNo, phone, address, dob, admissionDate } =
+      validated.data;
+
+    if (rollNo && classId) {
+      const duplicate = await db.query.students.findFirst({
+        where: and(
+          eq(students.schoolId, schoolId),
+          eq(students.classId, classId),
+          eq(students.rollNo, rollNo),
+          eq(students.isActive, true)
+        ),
+      });
+      if (duplicate) {
+        return NextResponse.json(
+          { error: "Yeh roll number is class mein pehle se hai" },
+          { status: 409 }
+        );
+      }
+    }
 
     const [student] = await db
       .insert(students)
       .values({
         schoolId,
         name,
-        fatherName,
-        phone: phone || null,
-        address: address || null,
+        fatherName: fatherName || null,
         classId: classId || null,
         rollNo: rollNo || null,
+        phone: phone || null,
+        address: address || null,
         dob: dob || null,
         admissionDate,
         isActive: true,

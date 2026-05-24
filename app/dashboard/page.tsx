@@ -103,9 +103,9 @@ export default function DashboardPage() {
           <p className="text-gray-500 text-sm mb-6 max-w-sm">
             Pehle ek class banao, phir students add karo.
           </p>
-          <Button asChild>
-            <Link href="/dashboard/students">Class Add Karo</Link>
-          </Button>
+          <Button onClick={() => window.location.href = "/dashboard/students"}>
+  Class Add Karo
+</Button>
         </div>
       )}
     </div>

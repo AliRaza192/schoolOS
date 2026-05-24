@@ -1,20 +1,9 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-import { z } from "zod";
 import { db } from "@/db";
 import { students, users } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
-
-const updateStudentSchema = z.object({
-  name: z.string().min(2).optional(),
-  fatherName: z.string().min(2).optional(),
-  phone: z.string().regex(/^03[0-9]{9}$/).optional().or(z.literal("")),
-  address: z.string().optional(),
-  classId: z.string().uuid().optional().or(z.literal("")),
-  rollNo: z.string().optional(),
-  dob: z.string().optional(),
-  isActive: z.boolean().optional(),
-});
+import { studentSchema } from "@/lib/validations/student";
 
 async function getSchoolId(userId: string) {
   const user = await db.query.users.findFirst({
@@ -23,7 +12,6 @@ async function getSchoolId(userId: string) {
   return user?.schoolId;
 }
 
-// GET — Single student
 export async function GET(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -42,9 +30,7 @@ export async function GET(
       with: { class: true },
     });
 
-    if (!student) {
-      return NextResponse.json({ error: "Student not found" }, { status: 404 });
-    }
+    if (!student) return NextResponse.json({ error: "Student not found" }, { status: 404 });
 
     return NextResponse.json({ student });
   } catch (error) {
@@ -53,7 +39,6 @@ export async function GET(
   }
 }
 
-// PATCH — Update student
 export async function PATCH(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -67,7 +52,7 @@ export async function PATCH(
 
     const { id } = await params;
     const body = await req.json();
-    const validated = updateStudentSchema.safeParse(body);
+    const validated = studentSchema.partial().safeParse(body);
 
     if (!validated.success) {
       return NextResponse.json(
@@ -80,16 +65,17 @@ export async function PATCH(
       where: and(eq(students.id, id), eq(students.schoolId, schoolId)),
     });
 
-    if (!existing) {
-      return NextResponse.json({ error: "Student not found" }, { status: 404 });
-    }
+    if (!existing) return NextResponse.json({ error: "Student not found" }, { status: 404 });
 
     const [updated] = await db
       .update(students)
       .set({
         ...validated.data,
-        classId: validated.data.classId || null,
+        fatherName: validated.data.fatherName || null,
         phone: validated.data.phone || null,
+        address: validated.data.address || null,
+        rollNo: validated.data.rollNo || null,
+        dob: validated.data.dob || null,
         updatedAt: new Date(),
       })
       .where(and(eq(students.id, id), eq(students.schoolId, schoolId)))
@@ -102,7 +88,6 @@ export async function PATCH(
   }
 }
 
-// DELETE — Soft delete student
 export async function DELETE(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -120,9 +105,7 @@ export async function DELETE(
       where: and(eq(students.id, id), eq(students.schoolId, schoolId)),
     });
 
-    if (!existing) {
-      return NextResponse.json({ error: "Student not found" }, { status: 404 });
-    }
+    if (!existing) return NextResponse.json({ error: "Student not found" }, { status: 404 });
 
     await db
       .update(students)
