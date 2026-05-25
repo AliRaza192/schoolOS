@@ -4,6 +4,7 @@ import { z } from "zod";
 import { db } from "@/db";
 import { schools, users } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { sendWelcomeEmail } from "@/lib/email";
 
 const onboardingSchema = z.object({
   schoolName: z.string().min(3).max(255),
@@ -48,6 +49,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
+    // 14 day free trial
+    const trialExpiry = new Date();
+    trialExpiry.setDate(trialExpiry.getDate() + 14);
+
     const [school] = await db
       .insert(schools)
       .values({
@@ -58,8 +63,16 @@ export async function POST(req: Request) {
         email,
         plan: "basic",
         isActive: true,
+        planExpiresAt: trialExpiry,
       })
       .returning();
+
+    console.log(
+      `[ONBOARDING] Trial started for: ${school.name}, expires: ${trialExpiry.toISOString()}`
+    );
+
+    const adminEmail =
+      clerkUser.emailAddresses?.[0]?.emailAddress ?? email;
 
     await db
       .insert(users)
@@ -67,7 +80,7 @@ export async function POST(req: Request) {
         clerkId: userId,
         schoolId: school.id,
         name: `${clerkUser.firstName ?? ""} ${clerkUser.lastName ?? ""}`.trim(),
-        email: clerkUser.emailAddresses?.[0]?.emailAddress ?? email,
+        email: adminEmail,
         role: "school_admin",
       })
       .onConflictDoUpdate({
@@ -78,6 +91,9 @@ export async function POST(req: Request) {
         },
       });
 
+    // Welcome email — fail hone par main operation fail nahi hoga
+    await sendWelcomeEmail(adminEmail, schoolName, 14);
+
     return NextResponse.json(
       { success: true, schoolId: school.id },
       { status: 201 }
@@ -85,9 +101,6 @@ export async function POST(req: Request) {
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     console.error("[ONBOARDING_POST]", message);
-    return NextResponse.json(
-      { error: message },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
