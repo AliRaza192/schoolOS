@@ -14,13 +14,14 @@ import {
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { UserButton } from "@clerk/nextjs";
-import { UserCheck, Bell } from "lucide-react";
+import { UserCheck, Bell, FileCheck } from "lucide-react";
 
 const navItems = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { label: "Students", href: "/dashboard/students", icon: Users },
   { label: "Attendance", href: "/dashboard/attendance", icon: CalendarCheck },
   { label: "Fees", href: "/dashboard/fees", icon: CreditCard },
+  { label: "Exams", href: "/dashboard/exams", icon: FileCheck },
   { label: "Parents", href: "/dashboard/parents", icon: UserCheck },
   { label: "Notifications", href: "/dashboard/notifications", icon: Bell },
   { label: "Reports", href: "/dashboard/reports", icon: FileText, badge: "AI" },

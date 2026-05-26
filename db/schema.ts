@@ -357,3 +357,84 @@ export const subscriptionsRelations = relations(subscriptions, ({ one }) => ({
     references: [schools.id],
   }),
 }));
+
+
+
+// ─── Exams ───────────────────────────────────────────────
+export const exams = pgTable("exams", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  schoolId: uuid("school_id")
+    .references(() => schools.id)
+    .notNull(),
+  classId: uuid("class_id")
+    .references(() => classes.id)
+    .notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  totalMarks: decimal("total_marks", { precision: 6, scale: 2 }).notNull(),
+  examDate: date("exam_date").notNull(),
+  subjects: text("subjects").notNull(),
+  isActive: boolean("is_active").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// ─── Exam Results ─────────────────────────────────────────
+export const examResults = pgTable(
+  "exam_results",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    examId: uuid("exam_id")
+      .references(() => exams.id)
+      .notNull(),
+    studentId: uuid("student_id")
+      .references(() => students.id)
+      .notNull(),
+    schoolId: uuid("school_id")
+      .references(() => schools.id)
+      .notNull(),
+    subjectResults: text("subject_results").notNull(),
+    totalObtained: decimal("total_obtained", { precision: 6, scale: 2 }).notNull(),
+    totalPossible: decimal("total_possible", { precision: 6, scale: 2 }).notNull(),
+    percentage: decimal("percentage", { precision: 5, scale: 2 }).notNull(),
+    grade: varchar("grade", { length: 5 }),
+    position: integer("position"),
+    remarks: text("remarks"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    uniqueExamStudent: unique().on(table.examId, table.studentId),
+  })
+);
+
+// ─── Exams Relations ─────────────────────────────────────
+export const examsRelations = relations(exams, ({ one, many }) => ({
+  school: one(schools, {
+    fields: [exams.schoolId],
+    references: [schools.id],
+  }),
+  class: one(classes, {
+    fields: [exams.classId],
+    references: [classes.id],
+  }),
+  results: many(examResults),
+}));
+
+export const examResultsRelations = relations(examResults, ({ one }) => ({
+  exam: one(exams, {
+    fields: [examResults.examId],
+    references: [exams.id],
+  }),
+  student: one(students, {
+    fields: [examResults.studentId],
+    references: [students.id],
+  }),
+  school: one(schools, {
+    fields: [examResults.schoolId],
+    references: [schools.id],
+  }),
+}));
+
+export type Exam = typeof exams.$inferSelect;
+export type NewExam = typeof exams.$inferInsert;
+export type ExamResult = typeof examResults.$inferSelect;
+export type NewExamResult = typeof examResults.$inferInsert;
