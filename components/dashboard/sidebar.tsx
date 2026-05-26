@@ -10,6 +10,7 @@ import {
   FileText,
   Settings,
   BookOpen,
+  Calendar
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -21,9 +22,11 @@ const navItems = [
   { label: "Students", href: "/dashboard/students", icon: Users },
   { label: "Attendance", href: "/dashboard/attendance", icon: CalendarCheck },
   { label: "Fees", href: "/dashboard/fees", icon: CreditCard },
-  { label: "Exams", href: "/dashboard/exams", icon: FileCheck },
   { label: "Parents", href: "/dashboard/parents", icon: UserCheck },
   { label: "Notifications", href: "/dashboard/notifications", icon: Bell },
+  { label: "Exams", href: "/dashboard/exams", icon: FileCheck },
+  { label: "Timetable", href: "/dashboard/timetable", icon: Calendar },
+  { label: "Homework", href: "/dashboard/timetable/homework", icon: BookOpen },
   { label: "Reports", href: "/dashboard/reports", icon: FileText, badge: "AI" },
   { label: "Settings", href: "/dashboard/settings", icon: Settings },
 ];

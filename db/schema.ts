@@ -438,3 +438,94 @@ export type Exam = typeof exams.$inferSelect;
 export type NewExam = typeof exams.$inferInsert;
 export type ExamResult = typeof examResults.$inferSelect;
 export type NewExamResult = typeof examResults.$inferInsert;
+
+
+// ─── Timetable Slots ─────────────────────────────────────
+export const timetableSlots = pgTable(
+  "timetable_slots",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    schoolId: uuid("school_id")
+      .references(() => schools.id)
+      .notNull(),
+    classId: uuid("class_id")
+      .references(() => classes.id)
+      .notNull(),
+    dayOfWeek: integer("day_of_week").notNull(),
+    periodNumber: integer("period_number").notNull(),
+    startTime: varchar("start_time", { length: 5 }).notNull(),
+    endTime: varchar("end_time", { length: 5 }).notNull(),
+    subject: varchar("subject", { length: 100 }).notNull(),
+    teacherId: uuid("teacher_id").references(() => users.id),
+    room: varchar("room", { length: 50 }),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    uniqueClassDayPeriod: unique().on(
+      table.classId,
+      table.dayOfWeek,
+      table.periodNumber
+    ),
+  })
+);
+
+// ─── Homework ─────────────────────────────────────────────
+export const homework = pgTable("homework", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  schoolId: uuid("school_id")
+    .references(() => schools.id)
+    .notNull(),
+  classId: uuid("class_id")
+    .references(() => classes.id)
+    .notNull(),
+  teacherId: uuid("teacher_id")
+    .references(() => users.id)
+    .notNull(),
+  subject: varchar("subject", { length: 100 }).notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  assignedDate: date("assigned_date").notNull(),
+  dueDate: date("due_date").notNull(),
+  isCompleted: boolean("is_completed").default(false).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// ─── Timetable Relations ──────────────────────────────────
+export const timetableSlotsRelations = relations(
+  timetableSlots,
+  ({ one }) => ({
+    school: one(schools, {
+      fields: [timetableSlots.schoolId],
+      references: [schools.id],
+    }),
+    class: one(classes, {
+      fields: [timetableSlots.classId],
+      references: [classes.id],
+    }),
+    teacher: one(users, {
+      fields: [timetableSlots.teacherId],
+      references: [users.id],
+    }),
+  })
+);
+
+export const homeworkRelations = relations(homework, ({ one }) => ({
+  school: one(schools, {
+    fields: [homework.schoolId],
+    references: [schools.id],
+  }),
+  class: one(classes, {
+    fields: [homework.classId],
+    references: [classes.id],
+  }),
+  teacher: one(users, {
+    fields: [homework.teacherId],
+    references: [users.id],
+  }),
+}));
+
+export type TimetableSlot = typeof timetableSlots.$inferSelect;
+export type NewTimetableSlot = typeof timetableSlots.$inferInsert;
+export type Homework = typeof homework.$inferSelect;
+export type NewHomework = typeof homework.$inferInsert;
