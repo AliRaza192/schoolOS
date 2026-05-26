@@ -10,6 +10,8 @@ const isPublicRoute = createRouteMatcher([
 ]);
 
 const isOnboardingRoute = createRouteMatcher(["/onboarding(.*)"]);
+const isParentRoute = createRouteMatcher(["/parent(.*)"]);
+const isDashboardRoute = createRouteMatcher(["/dashboard(.*)"]);
 
 export default clerkMiddleware(async (auth, req) => {
   const { userId } = await auth();

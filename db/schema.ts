@@ -169,6 +169,100 @@ export const subscriptions = pgTable("subscriptions", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+// ─── Notification Enums ──────────────────────────────────
+export const notificationTypeEnum = pgEnum("notification_type", [
+  "attendance", "fee", "general", "result",
+]);
+export const sentViaEnum = pgEnum("sent_via", [
+  "whatsapp", "email", "both",
+]);
+
+// ─── Parent Students (many-to-many) ─────────────────────
+export const parentStudents = pgTable(
+  "parent_students",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    parentUserId: uuid("parent_user_id")
+      .references(() => users.id)
+      .notNull(),
+    studentId: uuid("student_id")
+      .references(() => students.id)
+      .notNull(),
+    schoolId: uuid("school_id")
+      .references(() => schools.id)
+      .notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    uniqueParentStudent: unique().on(table.parentUserId, table.studentId),
+  })
+);
+
+// ─── Notifications ───────────────────────────────────────
+export const notifications = pgTable("notifications", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  schoolId: uuid("school_id")
+    .references(() => schools.id)
+    .notNull(),
+  studentId: uuid("student_id").references(() => students.id),
+  classId: uuid("class_id").references(() => classes.id),
+  title: varchar("title", { length: 255 }).notNull(),
+  message: text("message").notNull(),
+  type: notificationTypeEnum("type").notNull(),
+  sentVia: sentViaEnum("sent_via").notNull(),
+  sentAt: timestamp("sent_at").defaultNow().notNull(),
+  sentByUserId: uuid("sent_by_user_id").references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// ─── Parent Students Relations ───────────────────────────
+export const parentStudentsRelations = relations(
+  parentStudents,
+  ({ one }) => ({
+    parent: one(users, {
+      fields: [parentStudents.parentUserId],
+      references: [users.id],
+    }),
+    student: one(students, {
+      fields: [parentStudents.studentId],
+      references: [students.id],
+    }),
+    school: one(schools, {
+      fields: [parentStudents.schoolId],
+      references: [schools.id],
+    }),
+  })
+);
+
+// ─── Notifications Relations ─────────────────────────────
+export const notificationsRelations = relations(
+  notifications,
+  ({ one }) => ({
+    school: one(schools, {
+      fields: [notifications.schoolId],
+      references: [schools.id],
+    }),
+    student: one(students, {
+      fields: [notifications.studentId],
+      references: [students.id],
+    }),
+    class: one(classes, {
+      fields: [notifications.classId],
+      references: [classes.id],
+    }),
+    sentBy: one(users, {
+      fields: [notifications.sentByUserId],
+      references: [users.id],
+    }),
+  })
+);
+
+// Types
+export type ParentStudent = typeof parentStudents.$inferSelect;
+export type NewParentStudent = typeof parentStudents.$inferInsert;
+export type Notification = typeof notifications.$inferSelect;
+export type NewNotification = typeof notifications.$inferInsert;
+
 // ─── Types ───────────────────────────────────────────────
 export type School = typeof schools.$inferSelect;
 export type NewSchool = typeof schools.$inferInsert;
