@@ -3,25 +3,24 @@ import { auth } from "@clerk/nextjs/server";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import LandingPage from "./(marketing)/page";
 
 export default async function HomePage() {
   const { userId } = await auth();
 
-  // Not logged in → sign in page
-  if (!userId) {
-    redirect("/sign-in");
-  }
+  if (userId) {
+    const user = await db.query.users.findFirst({
+      where: eq(users.clerkId, userId),
+    });
 
-  // Check onboarding status
-  const user = await db.query.users.findFirst({
-    where: eq(users.clerkId, userId),
-  });
+    if (user?.schoolId) {
+      if (user.role === "parent") redirect("/parent");
+      redirect("/dashboard");
+    }
 
-  // Not onboarded → onboarding
-  if (!user?.schoolId) {
     redirect("/onboarding");
   }
 
-  // Onboarded → dashboard
-  redirect("/dashboard");
+  // Not logged in — show landing page
+  return <LandingPage />;
 }

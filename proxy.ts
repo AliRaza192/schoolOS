@@ -16,10 +16,15 @@ const isDashboardRoute = createRouteMatcher(["/dashboard(.*)"]);
 export default clerkMiddleware(async (auth, req) => {
   const { userId } = await auth();
 
-  // Public routes — allow without auth
-  if (isPublicRoute(req)) {
-    return NextResponse.next();
-  }
+ const isPublicRoute = createRouteMatcher([
+  "/",
+  "/pricing",
+  "/demo",
+  "/contact",
+  "/sign-in(.*)",
+  "/sign-up(.*)",
+  "/api/webhooks(.*)",
+]);
 
   // Not logged in — redirect to sign-in
   if (!userId) {
@@ -42,3 +47,4 @@ export const config = {
     "/(api|trpc)(.*)",
   ],
 };
+

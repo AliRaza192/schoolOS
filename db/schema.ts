@@ -529,3 +529,30 @@ export type TimetableSlot = typeof timetableSlots.$inferSelect;
 export type NewTimetableSlot = typeof timetableSlots.$inferInsert;
 export type Homework = typeof homework.$inferSelect;
 export type NewHomework = typeof homework.$inferInsert;
+
+// ─── Onboarding Progress ─────────────────────────────────
+export const onboardingProgress = pgTable("onboarding_progress", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  schoolId: uuid("school_id")
+    .references(() => schools.id)
+    .notNull()
+    .unique(),
+  completedSteps: text("completed_steps").notNull().default("[]"),
+  currentStep: varchar("current_step", { length: 50 }).default("add_class"),
+  isCompleted: boolean("is_completed").default(false).notNull(),
+  completedAt: timestamp("completed_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const onboardingProgressRelations = relations(
+  onboardingProgress,
+  ({ one }) => ({
+    school: one(schools, {
+      fields: [onboardingProgress.schoolId],
+      references: [schools.id],
+    }),
+  })
+);
+
+export type OnboardingProgress = typeof onboardingProgress.$inferSelect;
+export type NewOnboardingProgress = typeof onboardingProgress.$inferInsert;
