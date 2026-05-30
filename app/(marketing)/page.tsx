@@ -166,23 +166,56 @@ export default function LandingPage() {
           </Link>
 
           <div className="hidden md:flex items-center gap-8">
-            <Link href="#features" className="text-gray-600 hover:text-gray-900 text-sm">
+            <Link
+              href="#features"
+              className="text-gray-600 hover:text-gray-900 text-sm"
+            >
               Features
             </Link>
-            <Link href="#pricing" className="text-gray-600 hover:text-gray-900 text-sm">
+            <Link
+              href="#pricing"
+              className="text-gray-600 hover:text-gray-900 text-sm"
+            >
               Pricing
             </Link>
-            <Link href="/demo" className="text-gray-600 hover:text-gray-900 text-sm">
+            // Desktop nav links mein add karo:
+            <Link
+              href="/blog"
+              className="text-gray-600 hover:text-gray-900 text-sm"
+            >
+              Blog
+            </Link>
+            <Link
+              href="/cities"
+              className="text-gray-600 hover:text-gray-900 text-sm"
+            >
+              Cities
+            </Link>
+            <Link
+              href="/compare"
+              className="text-gray-600 hover:text-gray-900 text-sm"
+            >
+              Compare
+            </Link>
+            <Link
+              href="/demo"
+              className="text-gray-600 hover:text-gray-900 text-sm"
+            >
               Demo
             </Link>
-            <Link href="/contact" className="text-gray-600 hover:text-gray-900 text-sm">
+            <Link
+              href="/contact"
+              className="text-gray-600 hover:text-gray-900 text-sm"
+            >
               Contact
             </Link>
           </div>
 
           <div className="flex items-center gap-3">
             <Link href="/sign-in">
-              <Button variant="ghost" size="sm">Login</Button>
+              <Button variant="ghost" size="sm">
+                Login
+              </Button>
             </Link>
             <Link href="/sign-up">
               <Button size="sm" className="hidden sm:flex">
@@ -200,20 +233,24 @@ export default function LandingPage() {
             🇵🇰 Pakistan ke liye banaya gaya
           </Badge>
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight mb-6">
-            Pakistan ka{" "}
-            <span className="text-blue-600">Sabse Aasaan</span>
+            Pakistan ka <span className="text-blue-600">Sabse Aasaan</span>
             <br />
             School Management System
           </h1>
           <p className="text-xl text-gray-500 mb-8 max-w-2xl mx-auto leading-relaxed">
             Attendance, fees, results aur parents — sab kuch ek jagah.
             <br />
-            <strong className="text-gray-700">Excel chhodo, SchoolOS apnao.</strong>
+            <strong className="text-gray-700">
+              Excel chhodo, SchoolOS apnao.
+            </strong>
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
             <Link href="/sign-up">
-              <Button size="lg" className="h-14 px-8 text-lg font-semibold w-full sm:w-auto">
+              <Button
+                size="lg"
+                className="h-14 px-8 text-lg font-semibold w-full sm:w-auto"
+              >
                 14-Day Free Trial Shuru Karo
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
@@ -236,8 +273,7 @@ export default function LandingPage() {
               Koi credit card nahi
             </span>
             <span className="flex items-center gap-1">
-              <CheckCircle className="w-4 h-4 text-green-500" />
-              5 minute setup
+              <CheckCircle className="w-4 h-4 text-green-500" />5 minute setup
             </span>
             <span className="flex items-center gap-1">
               <CheckCircle className="w-4 h-4 text-green-500" />
@@ -309,7 +345,9 @@ export default function LandingPage() {
                 >
                   <feature.icon className="w-6 h-6" />
                 </div>
-                <h3 className="font-bold text-gray-900 mb-2">{feature.title}</h3>
+                <h3 className="font-bold text-gray-900 mb-2">
+                  {feature.title}
+                </h3>
                 <p className="text-gray-500 text-sm">{feature.desc}</p>
               </div>
             ))}
@@ -324,7 +362,9 @@ export default function LandingPage() {
             <h2 className="text-3xl font-bold text-gray-900 mb-3">
               3 Simple Steps
             </h2>
-            <p className="text-gray-500">Shuru karne mein sirf 7 minute lagte hain</p>
+            <p className="text-gray-500">
+              Shuru karne mein sirf 7 minute lagte hain
+            </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {STEPS.map((step, i) => (
@@ -359,7 +399,9 @@ export default function LandingPage() {
               >
                 {plan.badge && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <Badge className="bg-blue-600 text-white">{plan.badge}</Badge>
+                    <Badge className="bg-blue-600 text-white">
+                      {plan.badge}
+                    </Badge>
                   </div>
                 )}
                 <h3 className="text-xl font-bold text-gray-900">{plan.name}</h3>
@@ -372,7 +414,10 @@ export default function LandingPage() {
                 </div>
                 <ul className="space-y-2 mb-6">
                   {plan.features.map((f) => (
-                    <li key={f} className="flex items-center gap-2 text-sm text-gray-600">
+                    <li
+                      key={f}
+                      className="flex items-center gap-2 text-sm text-gray-600"
+                    >
                       <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
                       {f}
                     </li>
@@ -421,7 +466,9 @@ export default function LandingPage() {
                   &ldquo;{t.quote}&rdquo;
                 </p>
                 <div>
-                  <p className="font-semibold text-gray-900 text-sm">{t.name}</p>
+                  <p className="font-semibold text-gray-900 text-sm">
+                    {t.name}
+                  </p>
                   <p className="text-gray-400 text-xs">{t.role}</p>
                   <p className="text-gray-400 text-xs">{t.city}</p>
                 </div>
@@ -482,17 +529,28 @@ export default function LandingPage() {
             <div>
               <h4 className="text-white font-semibold mb-4">Product</h4>
               <div className="space-y-2 text-sm">
-                <Link href="#features" className="block hover:text-white">Features</Link>
-                <Link href="/pricing" className="block hover:text-white">Pricing</Link>
-                <Link href="/demo" className="block hover:text-white">Demo</Link>
+                <Link href="#features" className="block hover:text-white">
+                  Features
+                </Link>
+                <Link href="/pricing" className="block hover:text-white">
+                  Pricing
+                </Link>
+                <Link href="/demo" className="block hover:text-white">
+                  Demo
+                </Link>
               </div>
             </div>
 
             <div>
               <h4 className="text-white font-semibold mb-4">Company</h4>
               <div className="space-y-2 text-sm">
-                <Link href="/contact" className="block hover:text-white">Contact</Link>
-                <a href="mailto:support@schoolos.pk" className="block hover:text-white">
+                <Link href="/contact" className="block hover:text-white">
+                  Contact
+                </Link>
+                <a
+                  href="mailto:support@schoolos.pk"
+                  className="block hover:text-white"
+                >
                   support@schoolos.pk
                 </a>
               </div>
@@ -501,14 +559,20 @@ export default function LandingPage() {
             <div>
               <h4 className="text-white font-semibold mb-4">Legal</h4>
               <div className="space-y-2 text-sm">
-                <Link href="/privacy" className="block hover:text-white">Privacy Policy</Link>
-                <Link href="/terms" className="block hover:text-white">Terms of Service</Link>
+                <Link href="/privacy" className="block hover:text-white">
+                  Privacy Policy
+                </Link>
+                <Link href="/terms" className="block hover:text-white">
+                  Terms of Service
+                </Link>
               </div>
             </div>
           </div>
 
           <div className="border-t border-gray-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-            <p className="text-sm">© 2025 SchoolOS Pakistan. All rights reserved.</p>
+            <p className="text-sm">
+              © 2025 SchoolOS Pakistan. All rights reserved.
+            </p>
             <p className="text-sm">Made with ❤️ for Pakistani schools</p>
           </div>
         </div>
