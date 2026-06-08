@@ -22,6 +22,7 @@ import { UserCheck, Bell, FileCheck } from "lucide-react";
 const navItems = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { label: "Students", href: "/dashboard/students", icon: Users },
+{ label: "Classes", href: "/dashboard/students/classes", icon: BookOpen },
   { label: "Attendance", href: "/dashboard/attendance", icon: CalendarCheck },
   { label: "Fees", href: "/dashboard/fees", icon: CreditCard },
   { label: "Parents", href: "/dashboard/parents", icon: UserCheck },
