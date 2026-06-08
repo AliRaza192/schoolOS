@@ -19,7 +19,7 @@ const Form = FormProvider
 const FormFieldContext = React.createContext<{ name: string }>({} as { name: string })
 const FormItemContext = React.createContext<{ id: string }>({} as { id: string })
 
-function FormField(props: ControllerProps<FieldValues, FieldPath<FieldValues>>) {
+function FormField<TFieldValues extends FieldValues = FieldValues>(props: ControllerProps<TFieldValues, FieldPath<TFieldValues>>) {
   return (
     <FormFieldContext.Provider value={{ name: props.name }}>
       <Controller {...props} />

@@ -43,7 +43,12 @@ export default function CreateExamDialog({
   const [subjects, setSubjects] = useState<string[]>(DEFAULT_SUBJECTS);
   const [newSubject, setNewSubject] = useState("");
 
-  const { register, handleSubmit, setValue, watch, reset } = useForm({
+  const { register, handleSubmit, setValue, watch, reset } = useForm<{
+    name: string;
+    classId: string;
+    examDate: string;
+    totalMarks: string;
+  }>({
     defaultValues: {
       name: "",
       classId: "",
@@ -140,7 +145,7 @@ export default function CreateExamDialog({
           {/* Class */}
           <div className="space-y-2">
             <label className="text-sm font-medium">Class*</label>
-            <Select onValueChange={(v) => setValue("classId", v)}>
+            <Select onValueChange={(v) => setValue("classId", (v ?? "") as string)}>
               <SelectTrigger>
                 <SelectValue placeholder="Class select karo" />
               </SelectTrigger>

@@ -10,7 +10,9 @@ import {
   FileText,
   Settings,
   BookOpen,
-  Calendar
+  Calendar,
+  Building2,
+  UserCog,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -27,6 +29,8 @@ const navItems = [
   { label: "Exams", href: "/dashboard/exams", icon: FileCheck },
   { label: "Timetable", href: "/dashboard/timetable", icon: Calendar },
   { label: "Homework", href: "/dashboard/timetable/homework", icon: BookOpen },
+  { label: "Branches", href: "/dashboard/branches", icon: Building2 },
+  { label: "HR & Staff", href: "/dashboard/hr", icon: UserCog },
   { label: "Reports", href: "/dashboard/reports", icon: FileText, badge: "AI" },
   { label: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
@@ -99,7 +103,7 @@ export default function Sidebar({
           );
         })}
       </nav>
-      // Bottom — User
+      {/* Bottom — User */}
       <div className="flex items-center gap-3 px-4 py-4 border-t border-gray-200">
         <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
           <span className="text-blue-600 font-semibold text-sm">

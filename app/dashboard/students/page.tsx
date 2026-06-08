@@ -145,7 +145,7 @@ export default function StudentsPage() {
         <Select
           value={selectedClassId}
           onValueChange={(v) => {
-            setSelectedClassId(v);
+            setSelectedClassId(v ?? "");
             setPage(1);
           }}
         >

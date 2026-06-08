@@ -1,0 +1,21 @@
+# *
+User-agent: *
+Allow: /
+
+# *
+User-agent: *
+Disallow: /dashboard/
+
+# *
+User-agent: *
+Disallow: /api/
+
+# *
+User-agent: *
+Disallow: /parent/
+
+# Host
+Host: http://localhost:3000
+
+# Sitemaps
+Sitemap: http://localhost:3000/sitemap.xml

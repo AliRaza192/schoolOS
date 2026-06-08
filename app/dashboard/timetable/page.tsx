@@ -78,7 +78,7 @@ export default function TimetablePage() {
       <div className="flex items-center justify-between flex-wrap gap-3">
         <h1 className="text-2xl font-bold text-gray-900">Timetable</h1>
         <div className="flex items-center gap-3">
-          <Select value={selectedClassId} onValueChange={setSelectedClassId}>
+          <Select value={selectedClassId} onValueChange={(v) => setSelectedClassId(v ?? "")}>
             <SelectTrigger className="w-52">
               <SelectValue placeholder="Class select karo" />
             </SelectTrigger>

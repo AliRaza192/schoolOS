@@ -12,8 +12,7 @@ export const classSchema = z.object({
     .or(z.literal("")),
   academicYear: z
     .string()
-    .regex(/^\d{4}-\d{4}$/, "Format hona chahiye: YYYY-YYYY")
-    .default("2024-2025"),
+    .regex(/^\d{4}-\d{4}$/, "Format hona chahiye: YYYY-YYYY"),
   teacherId: z.string().uuid("Invalid teacher").optional().or(z.literal("")),
 });
 

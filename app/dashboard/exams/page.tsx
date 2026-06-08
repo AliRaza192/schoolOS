@@ -90,7 +90,7 @@ export default function ExamsPage() {
       <div className="flex gap-3">
         <Select
           value={classFilter}
-          onValueChange={setClassFilter}
+          onValueChange={(v) => setClassFilter(v ?? "")}
         >
           <SelectTrigger className="w-48">
             <SelectValue placeholder="All Classes" />

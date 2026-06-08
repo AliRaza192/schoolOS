@@ -161,7 +161,7 @@ export default function ReportsPage() {
       {/* Controls */}
       <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-4">
         <div className="flex flex-wrap gap-3">
-          <Select value={selectedClassId} onValueChange={setSelectedClassId}>
+          <Select value={selectedClassId} onValueChange={(v) => setSelectedClassId(v ?? "")}>
             <SelectTrigger className="w-52">
               <SelectValue placeholder="Class select karo*" />
             </SelectTrigger>
@@ -174,7 +174,7 @@ export default function ReportsPage() {
             </SelectContent>
           </Select>
 
-          <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+          <Select value={selectedMonth} onValueChange={(v) => setSelectedMonth(v ?? "")}>
             <SelectTrigger className="w-36">
               <SelectValue />
             </SelectTrigger>
@@ -187,7 +187,7 @@ export default function ReportsPage() {
             </SelectContent>
           </Select>
 
-          <Select value={selectedYear} onValueChange={setSelectedYear}>
+          <Select value={selectedYear} onValueChange={(v) => setSelectedYear(v ?? "")}>
             <SelectTrigger className="w-28">
               <SelectValue />
             </SelectTrigger>

@@ -58,11 +58,30 @@ export const schools = pgTable("schools", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+// ─── Branches (Multi-Branch Academy) ─────────────────────
+export const branches = pgTable("branches", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  schoolId: uuid("school_id")
+    .references(() => schools.id)
+    .notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  address: text("address"),
+  city: varchar("city", { length: 100 }),
+  phone: varchar("phone", { length: 20 }),
+  branchCode: varchar("branch_code", { length: 20 }).notNull().unique(),
+  managerId: uuid("manager_id"),
+  isActive: boolean("is_active").default(true).notNull(),
+  isMainBranch: boolean("is_main_branch").default(false).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 // ─── Users ───────────────────────────────────────────────
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
   clerkId: varchar("clerk_id", { length: 255 }).notNull().unique(),
   schoolId: uuid("school_id").references(() => schools.id),
+  branchId: uuid("branch_id").references(() => branches.id),
   name: varchar("name", { length: 255 }).notNull(),
   email: varchar("email", { length: 255 }).notNull(),
   role: roleEnum("role").default("school_admin").notNull(),
@@ -75,6 +94,7 @@ export const classes = pgTable("classes", {
   schoolId: uuid("school_id")
     .references(() => schools.id)
     .notNull(),
+  branchId: uuid("branch_id").references(() => branches.id),
   name: varchar("name", { length: 100 }).notNull(),
   section: varchar("section", { length: 10 }),
   teacherId: uuid("teacher_id").references(() => users.id),
@@ -290,6 +310,7 @@ export const schoolsRelations = relations(schools, ({ many }) => ({
   attendance: many(attendance),
   fees: many(fees),
   subscriptions: many(subscriptions),
+  branches: many(branches),
 }));
 
 export const usersRelations = relations(users, ({ one }) => ({
@@ -297,12 +318,20 @@ export const usersRelations = relations(users, ({ one }) => ({
     fields: [users.schoolId],
     references: [schools.id],
   }),
+  branch: one(branches, {
+    fields: [users.branchId],
+    references: [branches.id],
+  }),
 }));
 
 export const classesRelations = relations(classes, ({ one, many }) => ({
   school: one(schools, {
     fields: [classes.schoolId],
     references: [schools.id],
+  }),
+  branch: one(branches, {
+    fields: [classes.branchId],
+    references: [branches.id],
   }),
   teacher: one(users, {
     fields: [classes.teacherId],
@@ -544,6 +573,24 @@ export const onboardingProgress = pgTable("onboarding_progress", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+// ─── Student Transfers ───────────────────────────────────
+export const studentTransfers = pgTable("student_transfers", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  studentId: uuid("student_id")
+    .references(() => students.id)
+    .notNull(),
+  fromBranchId: uuid("from_branch_id")
+    .references(() => branches.id)
+    .notNull(),
+  toBranchId: uuid("to_branch_id")
+    .references(() => branches.id)
+    .notNull(),
+  transferDate: date("transfer_date").notNull(),
+  reason: text("reason"),
+  transferredByUserId: uuid("transferred_by_user_id").references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 export const onboardingProgressRelations = relations(
   onboardingProgress,
   ({ one }) => ({
@@ -556,3 +603,255 @@ export const onboardingProgressRelations = relations(
 
 export type OnboardingProgress = typeof onboardingProgress.$inferSelect;
 export type NewOnboardingProgress = typeof onboardingProgress.$inferInsert;
+
+// ─── Branches Relations ──────────────────────────────────
+export const branchesRelations = relations(branches, ({ one, many }) => ({
+  school: one(schools, {
+    fields: [branches.schoolId],
+    references: [schools.id],
+  }),
+  manager: one(users, {
+    fields: [branches.managerId],
+    references: [users.id],
+  }),
+  classes: many(classes),
+  users: many(users),
+}));
+
+export const studentTransfersRelations = relations(studentTransfers, ({ one }) => ({
+  student: one(students, {
+    fields: [studentTransfers.studentId],
+    references: [students.id],
+  }),
+  fromBranch: one(branches, {
+    fields: [studentTransfers.fromBranchId],
+    references: [branches.id],
+  }),
+  toBranch: one(branches, {
+    fields: [studentTransfers.toBranchId],
+    references: [branches.id],
+  }),
+  transferredBy: one(users, {
+    fields: [studentTransfers.transferredByUserId],
+    references: [users.id],
+  }),
+}));
+
+export type Branch = typeof branches.$inferSelect;
+export type NewBranch = typeof branches.$inferInsert;
+export type StudentTransfer = typeof studentTransfers.$inferSelect;
+export type NewStudentTransfer = typeof studentTransfers.$inferInsert;
+
+// ─── Enums for HR ────────────────────────────────────────
+export const leaveTypeEnum = pgEnum("leave_type", [
+  "sick",
+  "casual",
+  "annual",
+  "unpaid",
+]);
+
+export const leaveStatusEnum = pgEnum("leave_status", [
+  "pending",
+  "approved",
+  "rejected",
+]);
+
+export const salaryPaymentStatusEnum = pgEnum("salary_payment_status", [
+  "pending",
+  "paid",
+]);
+
+// ─── Staff ───────────────────────────────────────────────
+export const staff = pgTable("staff", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  schoolId: uuid("school_id")
+    .references(() => schools.id)
+    .notNull(),
+  branchId: uuid("branch_id").references(() => branches.id),
+  userId: uuid("user_id").references(() => users.id),
+  employeeCode: varchar("employee_code", { length: 20 }).notNull().unique(),
+  name: varchar("name", { length: 255 }).notNull(),
+  fatherName: varchar("father_name", { length: 255 }),
+  cnic: varchar("cnic", { length: 15 }),
+  phone: varchar("phone", { length: 20 }),
+  address: text("address"),
+  designation: varchar("designation", { length: 100 }).notNull(),
+  department: varchar("department", { length: 100 }),
+  joiningDate: date("joining_date").notNull(),
+  basicSalary: decimal("basic_salary", { precision: 10, scale: 2 }).notNull(),
+  isActive: boolean("is_active").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// ─── Salary Structure ───────────────────────────────────
+export const salaryStructure = pgTable("salary_structure", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  staffId: uuid("staff_id")
+    .references(() => staff.id)
+    .notNull(),
+  schoolId: uuid("school_id")
+    .references(() => schools.id)
+    .notNull(),
+  basicSalary: decimal("basic_salary", { precision: 10, scale: 2 }).notNull(),
+  houseRent: decimal("house_rent", { precision: 10, scale: 2 }).default("0"),
+  medicalAllowance: decimal("medical_allowance", { precision: 10, scale: 2 }).default("0"),
+  transportAllowance: decimal("transport_allowance", { precision: 10, scale: 2 }).default("0"),
+  otherAllowances: decimal("other_allowances", { precision: 10, scale: 2 }).default("0"),
+  providentFund: decimal("provident_fund", { precision: 10, scale: 2 }).default("0"),
+  incomeTax: decimal("income_tax", { precision: 10, scale: 2 }).default("0"),
+  otherDeductions: decimal("other_deductions", { precision: 10, scale: 2 }).default("0"),
+  grossSalary: decimal("gross_salary", { precision: 10, scale: 2 }),
+  netSalary: decimal("net_salary", { precision: 10, scale: 2 }),
+  effectiveFrom: date("effective_from").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// ─── Salary Payments ────────────────────────────────────
+export const salaryPayments = pgTable(
+  "salary_payments",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    staffId: uuid("staff_id")
+      .references(() => staff.id)
+      .notNull(),
+    schoolId: uuid("school_id")
+      .references(() => schools.id)
+      .notNull(),
+    month: integer("month").notNull(),
+    year: integer("year").notNull(),
+    basicSalary: decimal("basic_salary", { precision: 10, scale: 2 }).notNull(),
+    totalAllowances: decimal("total_allowances", { precision: 10, scale: 2 }).notNull(),
+    totalDeductions: decimal("total_deductions", { precision: 10, scale: 2 }).notNull(),
+    grossSalary: decimal("gross_salary", { precision: 10, scale: 2 }).notNull(),
+    netSalary: decimal("net_salary", { precision: 10, scale: 2 }).notNull(),
+    presentDays: integer("present_days").default(0),
+    absentDays: integer("absent_days").default(0),
+    leaveDays: integer("leave_days").default(0),
+    workingDays: integer("working_days").notNull(),
+    perDaySalary: decimal("per_day_salary", { precision: 10, scale: 2 }),
+    deductionForAbsent: decimal("deduction_for_absent", { precision: 10, scale: 2 }).default("0"),
+    finalPayable: decimal("final_payable", { precision: 10, scale: 2 }).notNull(),
+    status: salaryPaymentStatusEnum("status").default("pending").notNull(),
+    paidAt: timestamp("paid_at"),
+    paymentMethod: varchar("payment_method", { length: 50 }),
+    remarks: text("remarks"),
+    payslipNo: varchar("payslip_no", { length: 50 }),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    staffMonthYearUnique: unique("staff_month_year_unique").on(
+      table.staffId,
+      table.month,
+      table.year
+    ),
+  })
+);
+
+// ─── Leave Requests ─────────────────────────────────────
+export const leaveRequests = pgTable("leave_requests", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  staffId: uuid("staff_id")
+    .references(() => staff.id)
+    .notNull(),
+  schoolId: uuid("school_id")
+    .references(() => schools.id)
+    .notNull(),
+  leaveType: leaveTypeEnum("leave_type").notNull(),
+  fromDate: date("from_date").notNull(),
+  toDate: date("to_date").notNull(),
+  totalDays: integer("total_days").notNull(),
+  reason: text("reason"),
+  status: leaveStatusEnum("status").default("pending").notNull(),
+  approvedByUserId: uuid("approved_by_user_id").references(() => users.id),
+  approvedAt: timestamp("approved_at"),
+  remarks: text("remarks"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// ─── Leave Balances ─────────────────────────────────────
+export const leaveBalances = pgTable(
+  "leave_balances",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    staffId: uuid("staff_id")
+      .references(() => staff.id)
+      .notNull(),
+    schoolId: uuid("school_id")
+      .references(() => schools.id)
+      .notNull(),
+    year: integer("year").notNull(),
+    sickLeaveTotal: integer("sick_leave_total").default(10),
+    sickLeaveUsed: integer("sick_leave_used").default(0),
+    casualLeaveTotal: integer("casual_leave_total").default(10),
+    casualLeaveUsed: integer("casual_leave_used").default(0),
+    annualLeaveTotal: integer("annual_leave_total").default(14),
+    annualLeaveUsed: integer("annual_leave_used").default(0),
+  },
+  (table) => ({
+    staffYearUnique: unique("staff_year_unique").on(table.staffId, table.year),
+  })
+);
+
+// ─── HR Relations ───────────────────────────────────────
+export const staffRelations = relations(staff, ({ one, many }) => ({
+  school: one(schools, {
+    fields: [staff.schoolId],
+    references: [schools.id],
+  }),
+  branch: one(branches, {
+    fields: [staff.branchId],
+    references: [branches.id],
+  }),
+  user: one(users, {
+    fields: [staff.userId],
+    references: [users.id],
+  }),
+  salaryStructures: many(salaryStructure),
+  salaryPayments: many(salaryPayments),
+  leaveRequests: many(leaveRequests),
+  leaveBalances: many(leaveBalances),
+}));
+
+export const salaryStructureRelations = relations(salaryStructure, ({ one }) => ({
+  staff: one(staff, {
+    fields: [salaryStructure.staffId],
+    references: [staff.id],
+  }),
+}));
+
+export const salaryPaymentsRelations = relations(salaryPayments, ({ one }) => ({
+  staff: one(staff, {
+    fields: [salaryPayments.staffId],
+    references: [staff.id],
+  }),
+}));
+
+export const leaveRequestsRelations = relations(leaveRequests, ({ one }) => ({
+  staff: one(staff, {
+    fields: [leaveRequests.staffId],
+    references: [staff.id],
+  }),
+  approvedBy: one(users, {
+    fields: [leaveRequests.approvedByUserId],
+    references: [users.id],
+  }),
+}));
+
+export const leaveBalancesRelations = relations(leaveBalances, ({ one }) => ({
+  staff: one(staff, {
+    fields: [leaveBalances.staffId],
+    references: [staff.id],
+  }),
+}));
+
+export type Staff = typeof staff.$inferSelect;
+export type NewStaff = typeof staff.$inferInsert;
+export type SalaryStructure = typeof salaryStructure.$inferSelect;
+export type NewSalaryStructure = typeof salaryStructure.$inferInsert;
+export type SalaryPayment = typeof salaryPayments.$inferSelect;
+export type NewSalaryPayment = typeof salaryPayments.$inferInsert;
+export type LeaveRequest = typeof leaveRequests.$inferSelect;
+export type NewLeaveRequest = typeof leaveRequests.$inferInsert;
+export type LeaveBalance = typeof leaveBalances.$inferSelect;
+export type NewLeaveBalance = typeof leaveBalances.$inferInsert;

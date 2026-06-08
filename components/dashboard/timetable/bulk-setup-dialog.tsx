@@ -143,7 +143,7 @@ export default function BulkSetupDialog({
           <div className="space-y-4">
             <div className="space-y-2">
               <label className="text-sm font-medium">Class Select Karo*</label>
-              <Select value={selectedClassId} onValueChange={setSelectedClassId}>
+              <Select value={selectedClassId} onValueChange={(v) => setSelectedClassId(v ?? "")}>
                 <SelectTrigger>
                   <SelectValue placeholder="Class select karo" />
                 </SelectTrigger>

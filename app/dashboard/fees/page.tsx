@@ -210,7 +210,7 @@ export default function FeesPage() {
         <div className="flex flex-wrap gap-3">
           <Select
             value={filters.classId}
-            onValueChange={(v) => setFilters((f) => ({ ...f, classId: v }))}
+            onValueChange={(v) => setFilters((f) => ({ ...f, classId: v ?? "" }))}
           >
             <SelectTrigger className="w-44">
               <SelectValue placeholder="Sab Classes" />
@@ -227,7 +227,7 @@ export default function FeesPage() {
 
           <Select
             value={filters.month}
-            onValueChange={(v) => setFilters((f) => ({ ...f, month: v }))}
+            onValueChange={(v) => setFilters((f) => ({ ...f, month: v ?? "" }))}
           >
             <SelectTrigger className="w-36">
               <SelectValue placeholder="Month" />
@@ -244,7 +244,7 @@ export default function FeesPage() {
 
           <Select
             value={filters.year}
-            onValueChange={(v) => setFilters((f) => ({ ...f, year: v }))}
+            onValueChange={(v) => setFilters((f) => ({ ...f, year: v ?? "" }))}
           >
             <SelectTrigger className="w-28">
               <SelectValue />
@@ -260,7 +260,7 @@ export default function FeesPage() {
 
           <Select
             value={filters.status}
-            onValueChange={(v) => setFilters((f) => ({ ...f, status: v }))}
+            onValueChange={(v) => setFilters((f) => ({ ...f, status: v ?? "" }))}
           >
             <SelectTrigger className="w-36">
               <SelectValue placeholder="Sab Status" />

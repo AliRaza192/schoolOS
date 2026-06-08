@@ -254,7 +254,7 @@ export default function ParentStudentDetailPage() {
       {activeTab === "attendance" && (
         <div className="space-y-4">
           <div className="flex gap-3">
-            <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+            <Select value={selectedMonth} onValueChange={(v) => setSelectedMonth(v ?? "")}>
               <SelectTrigger className="w-36">
                 <SelectValue />
               </SelectTrigger>
@@ -264,7 +264,7 @@ export default function ParentStudentDetailPage() {
                 ))}
               </SelectContent>
             </Select>
-            <Select value={selectedYear} onValueChange={setSelectedYear}>
+            <Select value={selectedYear} onValueChange={(v) => setSelectedYear(v ?? "")}>
               <SelectTrigger className="w-28">
                 <SelectValue />
               </SelectTrigger>

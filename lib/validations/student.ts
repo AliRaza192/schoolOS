@@ -12,9 +12,7 @@ export const studentSchema = z.object({
     .or(z.literal("")),
   address: z.string().max(500).optional().or(z.literal("")),
   dob: z.string().optional().or(z.literal("")),
-  admissionDate: z
-    .string()
-    .default(() => new Date().toISOString().split("T")[0]),
+  admissionDate: z.string(),
 });
 
 export type StudentFormValues = z.infer<typeof studentSchema>;

@@ -180,7 +180,7 @@ export default function AttendancePage() {
             onChange={(e) => setSelectedDate(e.target.value)}
             className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <Select value={selectedClassId} onValueChange={setSelectedClassId}>
+          <Select value={selectedClassId} onValueChange={(v) => setSelectedClassId(v ?? "")}>
             <SelectTrigger className="w-52">
               <SelectValue placeholder="Class select karo" />
             </SelectTrigger>

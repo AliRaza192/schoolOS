@@ -1,9 +1,8 @@
 "use client";
 
-import type { Metadata } from "next";
 import Link from "next/link";
 import { useState } from "react";
-import { MessageSquare, Mail, Send } from "lucide-react";
+import { MessageSquare, Mail, Send, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -15,12 +14,25 @@ export default function ContactPage() {
     schoolName: "",
     message: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    console.log("Contact form:", form);
-    toast.success("Message receive ho gaya! Jald rabta karenge.");
-    setForm({ name: "", phone: "", schoolName: "", message: "" });
+    setIsLoading(true);
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      if (!res.ok) throw new Error("Failed to send");
+      toast.success("Message bhej diya gaya hai! Jald rabta karenge.");
+      setForm({ name: "", phone: "", schoolName: "", message: "" });
+    } catch {
+      toast.error("Message nahi bhej sake. Dobara try karein.");
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   const whatsappLink =
@@ -141,9 +153,13 @@ export default function ContactPage() {
                   required
                 />
               </div>
-              <Button type="submit" className="w-full">
-                <Send className="w-4 h-4 mr-2" />
-                Message Bhejein
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <Send className="w-4 h-4 mr-2" />
+                )}
+                {isLoading ? "Bhej rahe hain..." : "Message Bhejein"}
               </Button>
             </form>
           </div>

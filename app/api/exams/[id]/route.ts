@@ -39,6 +39,7 @@ export async function GET(
     const results = exam.results.map((r) => ({
       ...r,
       subjectResults: JSON.parse(r.subjectResults),
+      percentage: Number(r.percentage),
     }));
 
     const percentages = results.map((r) => Number(r.percentage));

@@ -56,10 +56,13 @@ export async function PATCH(
     });
 
     // Send confirmation email — silently fail
-    if (schoolAdmin?.email && subscription.school) {
+    const schoolName = subscription.school && !Array.isArray(subscription.school)
+      ? (subscription.school as { name?: string }).name
+      : undefined;
+    if (schoolAdmin?.email && schoolName) {
       await sendSubscriptionConfirmedEmail(
         schoolAdmin.email,
-        subscription.school.name,
+        schoolName,
         subscription.plan,
         expiryDate
       );

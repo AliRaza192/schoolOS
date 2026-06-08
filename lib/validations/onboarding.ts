@@ -14,7 +14,7 @@ export const onboardingSchema = z.object({
     'Multan',
     'Peshawar',
     'Other',
-  ], { required_error: 'City select karo' }),
+  ], { message: 'City select karo' }),
   phone: z
     .string()
     .regex(/^03\d{2}-?\d{7}$/, 'Phone format: 03XX-XXXXXXX')

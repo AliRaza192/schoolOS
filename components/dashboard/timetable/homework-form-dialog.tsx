@@ -37,7 +37,14 @@ export default function HomeworkFormDialog({
   const [isLoading, setIsLoading] = useState(false);
   const today = new Date().toISOString().split("T")[0];
 
-  const { register, handleSubmit, setValue, watch, reset } = useForm({
+  const { register, handleSubmit, setValue, watch, reset } = useForm<{
+    classId: string;
+    subject: string;
+    title: string;
+    description: string;
+    assignedDate: string;
+    dueDate: string;
+  }>({
     defaultValues: {
       classId: "",
       subject: "",
@@ -101,7 +108,7 @@ export default function HomeworkFormDialog({
           {/* Class */}
           <div className="space-y-1">
             <label className="text-sm font-medium">Class*</label>
-            <Select onValueChange={(v) => setValue("classId", v)}>
+            <Select onValueChange={(v) => setValue("classId", (v ?? "") as string)}>
               <SelectTrigger>
                 <SelectValue placeholder="Class select karo" />
               </SelectTrigger>

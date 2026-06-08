@@ -72,8 +72,9 @@ export async function POST(req: Request) {
     const attendancePercentage =
       totalDays > 0 ? Math.round((presentDays / totalDays) * 100) : 0;
     const paidFees = feeRecord?.status === "paid";
-    const className = student.class
-      ? `${student.class.name}${student.class.section ? ` (${student.class.section})` : ""}`
+    const studentClass = student.class as { name?: string; section?: string } | undefined;
+    const className = studentClass
+      ? `${studentClass.name ?? ""}${studentClass.section ? ` (${studentClass.section})` : ""}`
       : "N/A";
 
     const aiComment = await generateReportCard({

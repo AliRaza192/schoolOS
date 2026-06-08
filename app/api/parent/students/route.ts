@@ -37,7 +37,9 @@ export async function GET() {
 
     const children = await Promise.all(
       links.map(async (link) => {
-        const student = link.student;
+        const studentData = link.student as { id: string; name: string; rollNo: string | null; classId: string; fatherName: string | null; class?: { name?: string; section?: string } };
+        const student = studentData;
+        const studentClass = studentData.class;
 
         const [todayAttendance, currentFee, weekAttendance] = await Promise.all([
           db.query.attendance.findFirst({
@@ -70,8 +72,8 @@ export async function GET() {
           name: student.name,
           fatherName: student.fatherName,
           rollNo: student.rollNo,
-          class: student.class
-            ? `${student.class.name}${student.class.section ? ` (${student.class.section})` : ""}`
+          class: studentClass
+            ? `${studentClass.name ?? ""}${studentClass.section ? ` (${studentClass.section})` : ""}`
             : "—",
           todayAttendance: todayAttendance?.status ?? null,
           feeStatus: currentFee?.status ?? null,

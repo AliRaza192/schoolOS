@@ -218,7 +218,7 @@ export default function NotificationsPage() {
           {form.targetType === "class" && (
             <Select
               value={form.classId}
-              onValueChange={(v) => setForm((f) => ({ ...f, classId: v }))}
+              onValueChange={(v) => setForm((f) => ({ ...f, classId: v ?? "" }))}
             >
               <SelectTrigger className="w-52">
                 <SelectValue placeholder="Class select karo" />
@@ -240,7 +240,7 @@ export default function NotificationsPage() {
           <Select
             value={form.sendVia}
             onValueChange={(v) =>
-              setForm((f) => ({ ...f, sendVia: v as "whatsapp" | "email" | "both" }))
+              setForm((f) => ({ ...f, sendVia: (v ?? "whatsapp") as "whatsapp" | "email" | "both" }))
             }
           >
             <SelectTrigger className="w-48">

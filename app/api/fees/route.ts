@@ -46,12 +46,16 @@ export async function GET(req: Request) {
     // Filter by classId and search after join
     let filtered = result;
     if (classId) {
-      filtered = filtered.filter((f) => f.student?.classId === classId);
+      filtered = filtered.filter((f) => {
+        const student = f.student as { classId?: string } | undefined;
+        return student?.classId === classId;
+      });
     }
     if (search) {
-      filtered = filtered.filter((f) =>
-        f.student?.name.toLowerCase().includes(search.toLowerCase())
-      );
+      filtered = filtered.filter((f) => {
+        const student = f.student as { name?: string } | undefined;
+        return student?.name?.toLowerCase().includes(search.toLowerCase());
+      });
     }
 
     // Summary

@@ -198,7 +198,7 @@ export default function ExamResultsPage() {
                   className="border-b border-gray-100 hover:bg-gray-50"
                 >
                   <td className="px-3 py-3 font-medium text-gray-700">
-                    {getPositionLabel(result.position)}
+                    {result.position ? getPositionLabel(result.position) : "—"}
                   </td>
                   <td className="px-3 py-3 text-gray-400 text-xs">
                     {result.student.rollNo ?? "—"}

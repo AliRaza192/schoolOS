@@ -150,7 +150,7 @@ export default function BulkFeeDialog({
             <label className="text-sm font-medium">Class*</label>
             <Select
               value={form.watch("classId")}
-              onValueChange={(v) => form.setValue("classId", v)}
+              onValueChange={(v) => form.setValue("classId", v ?? "")}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Class select karo" />
@@ -176,7 +176,7 @@ export default function BulkFeeDialog({
               <label className="text-sm font-medium">Month*</label>
               <Select
                 value={form.watch("month")}
-                onValueChange={(v) => form.setValue("month", v)}
+                onValueChange={(v) => form.setValue("month", v ?? "")}
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -194,7 +194,7 @@ export default function BulkFeeDialog({
               <label className="text-sm font-medium">Year*</label>
               <Select
                 value={form.watch("year")}
-                onValueChange={(v) => form.setValue("year", v)}
+                onValueChange={(v) => form.setValue("year", v ?? "")}
               >
                 <SelectTrigger>
                   <SelectValue />

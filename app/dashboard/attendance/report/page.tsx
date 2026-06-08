@@ -129,7 +129,7 @@ export default function AttendanceReportPage() {
       {/* Controls */}
       <div className="bg-white rounded-xl border border-gray-200 p-4">
         <div className="flex flex-wrap gap-3">
-          <Select value={selectedClassId} onValueChange={setSelectedClassId}>
+          <Select value={selectedClassId} onValueChange={(v) => setSelectedClassId(v ?? "")}>
             <SelectTrigger className="w-52">
               <SelectValue placeholder="Class select karo" />
             </SelectTrigger>
@@ -142,7 +142,7 @@ export default function AttendanceReportPage() {
             </SelectContent>
           </Select>
 
-          <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+          <Select value={selectedMonth} onValueChange={(v) => setSelectedMonth(v ?? "")}>
             <SelectTrigger className="w-40">
               <SelectValue placeholder="Month" />
             </SelectTrigger>
@@ -155,7 +155,7 @@ export default function AttendanceReportPage() {
             </SelectContent>
           </Select>
 
-          <Select value={selectedYear} onValueChange={setSelectedYear}>
+          <Select value={selectedYear} onValueChange={(v) => setSelectedYear(v ?? "")}>
             <SelectTrigger className="w-28">
               <SelectValue placeholder="Year" />
             </SelectTrigger>

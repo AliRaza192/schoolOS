@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Clock, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
   title: "Blog - School Management Tips",
@@ -127,16 +128,5 @@ export default function BlogPage() {
         </div>
       </div>
     </div>
-  );
-}
-
-function Button({ children, ...props }: React.ComponentProps<"a"> & { children: React.ReactNode }) {
-  return (
-    <a
-      className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
-      {...props}
-    >
-      {children}
-    </a>
   );
 }

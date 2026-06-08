@@ -9,7 +9,6 @@ import {
   Smartphone,
   CheckCircle,
   ArrowRight,
-  Star,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -80,30 +79,6 @@ const STEPS = [
     num: "3",
     title: "Kaam shuru karo",
     desc: "Attendance, fees, reports — sab ready hai pehle din se.",
-  },
-];
-
-const TESTIMONIALS = [
-  {
-    quote:
-      "SchoolOS ne hamari school ki fee collection 80% improve kar di. Ab koi fee miss nahi hoti.",
-    name: "Muhammad Arif",
-    role: "Principal, Al-Noor School",
-    city: "Karachi",
-  },
-  {
-    quote:
-      "Attendance register se chutkara mila. Roz 30 minute bachte hain. Teachers bhi khush hain.",
-    name: "Fatima Siddiqui",
-    role: "School Admin, Bright Future Academy",
-    city: "Lahore",
-  },
-  {
-    quote:
-      "AI report cards ka feature amazing hai. Parents impressed hote hain professional comments dekh ke.",
-    name: "Asad Khan",
-    role: "Director, Pakistan International School",
-    city: "Islamabad",
   },
 ];
 
@@ -178,7 +153,6 @@ export default function LandingPage() {
             >
               Pricing
             </Link>
-            // Desktop nav links mein add karo:
             <Link
               href="/blog"
               className="text-gray-600 hover:text-gray-900 text-sm"
@@ -284,9 +258,9 @@ export default function LandingPage() {
           {/* Stats */}
           <div className="grid grid-cols-3 gap-6 mt-12 max-w-lg mx-auto">
             {[
-              { num: "200+", label: "Schools" },
-              { num: "50,000+", label: "Students" },
-              { num: "99.9%", label: "Uptime" },
+              { num: "5 min", label: "Setup Time" },
+              { num: "14 din", label: "Free Trial" },
+              { num: "Rs. 0", label: "Setup Cost" },
             ].map((stat) => (
               <div key={stat.label} className="text-center">
                 <p className="text-3xl font-bold text-blue-600">{stat.num}</p>
@@ -440,38 +414,42 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* TESTIMONIALS */}
+      {/* WHY SCHOOLOS */}
       <section className="py-16 px-4 bg-gray-50">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-3">
-              Schools Kya Kehti Hain
+              Pakistani Schools Ke Liye Kyun?
             </h2>
+            <p className="text-gray-500">
+              SchoolOS sirf software nahi — Pakistan ki school management ka hal hai
+            </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {TESTIMONIALS.map((t, i) => (
+            {[
+              {
+                icon: "🇵🇰",
+                title: "Pakistan Ke Liye Banaya",
+                desc: "PKR pricing, EasyPaisa payment, Roman Urdu interface — sab kuch Pakistani schools ke hisaab se.",
+              },
+              {
+                icon: "💰",
+                title: "Affordable Pricing",
+                desc: "Rs. 1,500/month se shuru. Koi hidden charges nahi. 14 din free trial.",
+              },
+              {
+                icon: "⚡",
+                title: "5 Minute Setup",
+                desc: "Koi technical knowledge nahi chahiye. Sign up karo, students add karo, kaam shuru.",
+              },
+            ].map((item, i) => (
               <div
                 key={i}
-                className="bg-white rounded-xl border border-gray-200 p-6"
+                className="bg-white rounded-xl border border-gray-200 p-6 text-center"
               >
-                <div className="flex gap-1 mb-4">
-                  {[...Array(5)].map((_, j) => (
-                    <Star
-                      key={j}
-                      className="w-4 h-4 text-amber-400 fill-amber-400"
-                    />
-                  ))}
-                </div>
-                <p className="text-gray-600 text-sm mb-4 leading-relaxed">
-                  &ldquo;{t.quote}&rdquo;
-                </p>
-                <div>
-                  <p className="font-semibold text-gray-900 text-sm">
-                    {t.name}
-                  </p>
-                  <p className="text-gray-400 text-xs">{t.role}</p>
-                  <p className="text-gray-400 text-xs">{t.city}</p>
-                </div>
+                <span className="text-4xl mb-4 block">{item.icon}</span>
+                <h3 className="font-bold text-gray-900 mb-2">{item.title}</h3>
+                <p className="text-gray-500 text-sm">{item.desc}</p>
               </div>
             ))}
           </div>
