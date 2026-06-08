@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { getSchoolId } from "@/lib/auth-helpers";
 import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { staff, users, salaryStructure, salaryPayments } from "@/db/schema";
@@ -6,12 +7,6 @@ import { eq, and, count, desc } from "drizzle-orm";
 import { processPayrollSchema } from "@/lib/validations/hr";
 import { calculateSalaryStructure, calculatePayableAmount, generatePayslipNumber } from "@/lib/payroll";
 
-async function getSchoolId(userId: string) {
-  const user = await db.query.users.findFirst({
-    where: eq(users.clerkId, userId),
-  });
-  return user?.schoolId;
-}
 
 // GET — list salary payments for a month
 export async function GET(req: Request) {

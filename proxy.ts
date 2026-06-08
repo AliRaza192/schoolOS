@@ -4,27 +4,32 @@ import { NextResponse } from "next/server";
 const isPublicRoute = createRouteMatcher([
   "/",
   "/pricing",
+  "/demo",
+  "/demo(.*)",
+  "/contact",
+  "/blog",
+  "/blog/(.*)",
+  "/cities",
+  "/cities/(.*)",
+  "/compare",
+  "/privacy",
+  "/terms",
   "/sign-in(.*)",
   "/sign-up(.*)",
   "/api/webhooks(.*)",
+  "/api/og(.*)",
 ]);
 
 const isOnboardingRoute = createRouteMatcher(["/onboarding(.*)"]);
 const isParentRoute = createRouteMatcher(["/parent(.*)"]);
-const isDashboardRoute = createRouteMatcher(["/dashboard(.*)"]);
 
 export default clerkMiddleware(async (auth, req) => {
-  const { userId } = await auth();
+  // Public routes — allow without auth
+  if (isPublicRoute(req)) {
+    return NextResponse.next();
+  }
 
- const isPublicRoute = createRouteMatcher([
-  "/",
-  "/pricing",
-  "/demo",
-  "/contact",
-  "/sign-in(.*)",
-  "/sign-up(.*)",
-  "/api/webhooks(.*)",
-]);
+  const { userId } = await auth();
 
   // Not logged in — redirect to sign-in
   if (!userId) {
@@ -33,8 +38,8 @@ export default clerkMiddleware(async (auth, req) => {
     return NextResponse.redirect(signInUrl);
   }
 
-  // Logged in + onboarding route — allow
-  if (isOnboardingRoute(req)) {
+  // Onboarding aur parent routes — allow logged-in users
+  if (isOnboardingRoute(req) || isParentRoute(req)) {
     return NextResponse.next();
   }
 
@@ -47,4 +52,3 @@ export const config = {
     "/(api|trpc)(.*)",
   ],
 };
-

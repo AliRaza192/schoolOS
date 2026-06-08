@@ -1,16 +1,11 @@
 import { auth } from "@clerk/nextjs/server";
+import { getSchoolId } from "@/lib/auth-helpers";
 import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { fees, users } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { markPaidSchema } from "@/lib/validations/fee";
 
-async function getSchoolId(userId: string) {
-  const user = await db.query.users.findFirst({
-    where: eq(users.clerkId, userId),
-  });
-  return user?.schoolId;
-}
 
 function generateReceiptNo(): string {
   const year = new Date().getFullYear();

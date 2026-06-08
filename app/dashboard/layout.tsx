@@ -1,10 +1,13 @@
 import { auth } from "@clerk/nextjs/server";
+import { getSchoolId } from "@/lib/auth-helpers";
 import { redirect } from "next/navigation";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import Sidebar from "@/components/dashboard/sidebar";
 import Header from "@/components/dashboard/header";
+import { headers } from "next/headers";
+
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -49,7 +52,7 @@ export default async function DashboardLayout({
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header
-          title="Dashboard"
+          title="SchoolOS"
           schoolName={user.school.name}
           schoolPlan={user.school.plan}
           userName={user.name}

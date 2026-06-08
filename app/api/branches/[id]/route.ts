@@ -1,16 +1,11 @@
 import { auth } from "@clerk/nextjs/server";
+import { getSchoolId } from "@/lib/auth-helpers";
 import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { branches, classes, students, users } from "@/db/schema";
 import { eq, and, count } from "drizzle-orm";
 import { updateBranchSchema } from "@/lib/validations/branch";
 
-async function getSchoolId(userId: string) {
-  const user = await db.query.users.findFirst({
-    where: eq(users.clerkId, userId),
-  });
-  return user?.schoolId;
-}
 
 // GET — branch details with stats
 export async function GET(

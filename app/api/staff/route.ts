@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { getSchoolId } from "@/lib/auth-helpers";
 import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { staff, users, leaveBalances } from "@/db/schema";
@@ -6,12 +7,6 @@ import { eq, and, count, like, or } from "drizzle-orm";
 import { createStaffSchema } from "@/lib/validations/hr";
 import { generateEmployeeCode } from "@/lib/payroll";
 
-async function getSchoolId(userId: string) {
-  const user = await db.query.users.findFirst({
-    where: eq(users.clerkId, userId),
-  });
-  return user?.schoolId;
-}
 
 // GET — list all staff
 export async function GET(req: Request) {

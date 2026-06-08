@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { getSchoolId } from "@/lib/auth-helpers";
 import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { users, students, classes, notifications, parentStudents } from "@/db/schema";

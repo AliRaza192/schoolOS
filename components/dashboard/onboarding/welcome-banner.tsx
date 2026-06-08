@@ -23,10 +23,8 @@ export default function WelcomeBanner({
   }, []);
 
   // Only show if school created < 24 hours ago
-  const isNew =
-    new Date().getTime() - new Date(createdAt).getTime() 
-    24 * 60 * 60 * 1000;
-
+  const isNew = new Date().getTime() - new Date(createdAt).getTime();
+  24 * 60 * 60 * 1000;
   if (!isNew || isDismissed) return null;
 
   function handleDismiss() {

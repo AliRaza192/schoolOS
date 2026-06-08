@@ -1,16 +1,11 @@
 import { auth } from "@clerk/nextjs/server";
+import { getSchoolId } from "@/lib/auth-helpers";
 import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { leaveRequests, leaveBalances, staff, users } from "@/db/schema";
 import { eq, and, desc } from "drizzle-orm";
 import { leaveRequestSchema } from "@/lib/validations/hr";
 
-async function getSchoolId(userId: string) {
-  const user = await db.query.users.findFirst({
-    where: eq(users.clerkId, userId),
-  });
-  return user?.schoolId;
-}
 
 // GET — list leave requests
 export async function GET(req: Request) {

@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { getSchoolId } from "@/lib/auth-helpers";
 import { redirect } from "next/navigation";
 import { db } from "@/db";
 import { users } from "@/db/schema";

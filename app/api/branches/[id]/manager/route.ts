@@ -1,16 +1,11 @@
 import { auth } from "@clerk/nextjs/server";
+import { getSchoolId } from "@/lib/auth-helpers";
 import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { branches, users } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { assignBranchManagerSchema } from "@/lib/validations/branch";
 
-async function getSchoolId(userId: string) {
-  const user = await db.query.users.findFirst({
-    where: eq(users.clerkId, userId),
-  });
-  return user?.schoolId;
-}
 
 // POST — assign branch manager
 export async function POST(

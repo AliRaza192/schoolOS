@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { getSchoolId } from "@/lib/auth-helpers";
 import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { exams, examResults, users } from "@/db/schema";
@@ -10,12 +11,6 @@ import {
   generateResultRemarks,
 } from "@/lib/exam-utils";
 
-async function getSchoolId(userId: string) {
-  const user = await db.query.users.findFirst({
-    where: eq(users.clerkId, userId),
-  });
-  return user?.schoolId;
-}
 
 export async function GET(
   req: Request,

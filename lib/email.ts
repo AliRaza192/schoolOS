@@ -3,7 +3,7 @@ import { Resend } from "resend";
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 const FROM = "SchoolOS <onboarding@resend.dev>";
-const ADMIN_EMAIL = "aliraza.work24@gmail.com";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? "admin@schoolos.pk";
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 const BRAND_COLOR = "#2563EB";
 
